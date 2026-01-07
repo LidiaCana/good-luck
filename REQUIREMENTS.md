@@ -293,6 +293,48 @@ Users who browse raffles, purchase tickets, view posts, and manage their profile
 
 ---
 
+## 4.4 Multi-Language Support
+
+### 4.4.1 Language Selection
+- **Feature**: Support for multiple languages
+- **Requirements**:
+  - Language selector in user settings/profile
+  - Support for at least 2-3 languages initially (English, Spanish, etc.)
+  - Language preference saved per user
+  - Language change applies immediately across the app
+  - Default language based on device/system settings
+- **User Roles**: Both Organizers and Participants
+
+### 4.4.2 Localized Content
+- **Feature**: All UI elements and content translated
+- **Requirements**:
+  - **UI Elements**:
+    - All buttons, labels, navigation items
+    - Form fields and placeholders
+    - Error messages and notifications
+    - Success messages and confirmations
+  - **Content**:
+    - Raffle titles and descriptions (user-generated content remains in original language)
+    - Post content (user-generated content remains in original language)
+    - Terms and conditions
+    - Help text and tooltips
+  - **Dynamic Content**:
+    - Date and time formatting (locale-specific)
+    - Currency formatting (locale-specific)
+    - Number formatting
+- **User Roles**: Both Organizers and Participants
+
+### 4.4.3 Translation Management
+- **Feature**: Manage translations
+- **Requirements**:
+  - Translation files (JSON/YAML) for each language
+  - Easy addition of new languages
+  - Fallback to default language if translation missing
+  - RTL (Right-to-Left) language support (if needed)
+- **User Roles**: Both (managed by system)
+
+---
+
 ## 5. Technical Requirements
 
 ### 5.1 Backend (Phoenix/Elixir)
@@ -309,6 +351,7 @@ Users who browse raffles, purchase tickets, view posts, and manage their profile
 - **Users Table**:
   - id, email, name, role (organizer/participant)
   - auth_provider_id (Auth0/Clerk ID)
+  - language_preference (default: 'en')
   - created_at, updated_at
 - **Raffles Table**:
   - id, organizer_id, title, description
@@ -354,13 +397,33 @@ Users who browse raffles, purchase tickets, view posts, and manage their profile
 - Repository pattern
 
 #### 5.2.2 UI/UX Requirements
-- Responsive design
-- Dark mode support (optional)
-- Accessibility support
-- Loading states
-- Error handling UI
-- Empty states
-- Pull-to-refresh
+- **Modern Design**:
+  - Clean, minimalist interface
+  - Modern color palette with consistent theming
+  - Smooth animations and transitions
+  - Card-based layouts for content
+  - Modern typography (system fonts or custom fonts)
+  - Consistent spacing and padding
+  - Modern iconography
+  - Gradient accents (optional)
+  - Glassmorphism or neumorphism effects (optional)
+- **Responsive Design**:
+  - Mobile-first approach
+  - Adaptive layouts for different screen sizes
+  - Breakpoints for: mobile (320px+), tablet (768px+), desktop (1024px+)
+  - Flexible grid system
+  - Responsive images and media
+  - Touch-friendly interactive elements (minimum 44x44px)
+  - Landscape and portrait orientation support
+- **Additional UX Features**:
+  - Dark mode support (optional)
+  - Accessibility support (WCAG 2.1 AA compliance)
+  - Loading states with skeleton screens
+  - Error handling UI with clear messages
+  - Empty states with helpful guidance
+  - Pull-to-refresh functionality
+  - Smooth scrolling and navigation
+  - Haptic feedback (where appropriate)
 
 #### 5.2.3 Navigation
 - Bottom navigation bar
@@ -398,6 +461,68 @@ Users who browse raffles, purchase tickets, view posts, and manage their profile
 - CDN for media delivery
 - Image optimization
 - Video transcoding (optional)
+
+### 5.6 Design System
+
+#### 5.6.1 Design Principles
+- **Feature**: Modern, responsive design system
+- **Requirements**:
+  - **Visual Design**:
+    - Clean, minimalist aesthetic
+    - Consistent color palette with primary, secondary, and accent colors
+    - Modern typography hierarchy (headings, body, captions)
+    - Consistent spacing scale (4px or 8px base unit)
+    - Subtle shadows and elevation for depth
+    - Smooth animations (60fps target)
+    - Consistent border radius for cards and buttons
+  - **Component Library**:
+    - Reusable UI components
+    - Consistent button styles (primary, secondary, outline, text)
+    - Form input components with validation states
+    - Card components for content display
+    - Modal and dialog components
+    - Navigation components (bottom nav, tabs, drawer)
+    - Loading indicators and skeleton screens
+  - **Responsive Breakpoints**:
+    - Mobile: 320px - 767px
+    - Tablet: 768px - 1023px
+    - Desktop: 1024px+
+  - **Accessibility**:
+    - WCAG 2.1 AA compliance
+    - Proper color contrast ratios (4.5:1 for text)
+    - Keyboard navigation support
+    - Screen reader support
+    - Focus indicators
+    - Semantic HTML structure
+
+### 5.7 Internationalization (i18n)
+
+#### 5.7.1 Backend i18n
+- **Feature**: Backend translation support
+- **Requirements**:
+  - Gettext or similar i18n library for Elixir
+  - Translation files for error messages
+  - API responses support locale parameter
+  - Date/time formatting based on locale
+  - Currency formatting based on locale
+  - Language preference stored in user profile
+
+#### 5.7.2 Frontend i18n
+- **Feature**: Flutter internationalization
+- **Requirements**:
+  - Flutter `intl` package
+  - ARB (Application Resource Bundle) files for translations
+  - `flutter_localizations` for built-in localization
+  - Locale detection from device settings
+  - Language switcher component
+  - RTL (Right-to-Left) layout support
+  - Pluralization support
+  - Date/time/currency formatting per locale
+
+#### 5.7.3 Supported Languages (Initial)
+- English (en) - Default
+- Spanish (es)
+- Additional languages to be added based on user demand
 
 ---
 
@@ -445,6 +570,8 @@ Users who browse raffles, purchase tickets, view posts, and manage their profile
 - Authentication integration
 - Basic user management
 - Database schema
+- i18n setup and basic translations
+- Modern UI design system and components
 
 ### Phase 2: Core Raffle Features
 - Raffle CRUD operations
@@ -525,11 +652,31 @@ Users who browse raffles, purchase tickets, view posts, and manage their profile
 - `AWS_ACCESS_KEY_ID` (for media storage)
 - `AWS_SECRET_ACCESS_KEY`
 - `AWS_S3_BUCKET`
+- `DEFAULT_LOCALE` (default: 'en')
+- `SUPPORTED_LOCALES` (comma-separated, e.g., 'en,es,fr')
 
 ### Frontend
 - `API_BASE_URL`
 - `AUTH0_CLIENT_ID` / `CLERK_PUBLISHABLE_KEY`
 - `STRIPE_PUBLISHABLE_KEY`
+- `DEFAULT_LOCALE` (default: 'en')
+- `SUPPORTED_LOCALES` (comma-separated, e.g., 'en,es,fr')
+
+---
+
+### Wallet
+- `GET /api/v1/wallet` (balance)
+- `GET /api/v1/wallet/transactions` (history)
+- `POST /api/v1/wallet/top-up` (add funds)
+
+### Stripe
+- `POST /api/v1/stripe/connect` (connect account)
+- `GET /api/v1/stripe/account` (account status)
+- `GET /api/v1/stripe/balance` (balance)
+
+### Localization
+- `GET /api/v1/locales` (list supported locales)
+- `GET /api/v1/locales/:locale/translations` (get translations for locale)
 
 ---
 
@@ -538,11 +685,11 @@ Users who browse raffles, purchase tickets, view posts, and manage their profile
 - Push notifications
 - Email notifications
 - SMS notifications
-- Multi-language support
 - Admin dashboard
 - Casino games implementation
 - Social features (follow organizers, friends)
 - Raffle categories/tags
 - Advanced search and filters
 - Recommendation engine
+- Additional language support (beyond initial set)
 
